@@ -1,0 +1,8 @@
+server:
+  port: 8080
+spring:
+  # 关闭模版引擎的缓存
+  thymeleaf:
+    cache: false
+  profiles:
+    active: kafka
