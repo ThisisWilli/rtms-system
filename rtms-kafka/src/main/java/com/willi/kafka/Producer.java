@@ -24,7 +24,7 @@ public class Producer {
         // key的序列化方式
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         // value的序列化方式
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.seriization.StringSerializer");
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
         System.out.println("start send message....");
         // 开始发送消息

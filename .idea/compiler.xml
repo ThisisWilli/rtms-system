@@ -7,21 +7,27 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="rtms-web" />
+        <module name="rtmsflink" />
+        <module name="rtms-flink" />
         <module name="rtms-kafka" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="BigData-Platform" target="1.8" />
+      <module name="rtms-flink" target="1.8" />
       <module name="rtms-kafka" target="1.8" />
       <module name="rtms-web" target="1.8" />
+      <module name="rtmsflink" target="1.8" />
       <module name="test" target="1.5" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="BigData-Platform" options="-parameters" />
+      <module name="rtms-flink" options="" />
       <module name="rtms-kafka" options="-parameters" />
       <module name="rtms-web" options="-parameters" />
+      <module name="rtmsflink" options="-parameters" />
     </option>
   </component>
 </project>
