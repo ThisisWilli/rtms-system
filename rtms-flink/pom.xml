@@ -65,7 +65,22 @@ under the License.
 			<version>${flink.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<!--        引入java读取csv的包-->
+		<dependency>
+			<groupId>net.sourceforge.javacsv</groupId>
+			<artifactId>javacsv</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.58</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.12</artifactId>
+			<version>0.11.0.3</version>
+		</dependency>
 
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
 		<dependency>

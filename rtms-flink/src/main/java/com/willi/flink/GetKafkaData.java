@@ -1,4 +1,4 @@
-package com.willi;
+package com.willi.flink;
 
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -30,13 +30,15 @@ public class GetKafkaData {
 // only required for Kafka 0.8
         properties.setProperty("zookeeper.connect", "localhost:2182");
         properties.setProperty("group.id", "test");
-        FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<>("flink2", new SimpleStringSchema(), properties);
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        // value的序列化方式
+        properties.put("value.deserializer", "streaming.kafka.bean.PersonDeserializer");
+        FlinkKafkaConsumer<String> consumer = new FlinkKafkaConsumer<>("orgin", new SimpleStringSchema(), properties);
         DataStreamSource<String> source = env.addSource(consumer);
         SingleOutputStreamOperator<String> map = source.map(line -> {
-            System.out.println(line);
-            return line + "=======";
+            return line;
         });
-        map.writeAsText("/Users/williwei/IdeaProjects/flink_kafka/data/result");
+        map.writeAsText("/Users/williwei/IdeaProjects/BigData-Platform/rtms-flink/data/result");
         // execute program
         env.execute("Flink Batch Java API Skeleton");
     }
