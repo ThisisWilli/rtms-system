@@ -1,7 +1,7 @@
 package com.willi.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.willi.Bean.Shopper;
+import com.willi.Bean.Order;
 import org.apache.kafka.common.serialization.Serializer;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  * @create: 2020-02-19 20:14
  **/
 
-public class ShopperSerializer implements Serializer<Shopper> {
+public class OrderSerializer implements Serializer<Order> {
 
     @Override
     public void configure(Map map, boolean b) {
@@ -21,8 +21,8 @@ public class ShopperSerializer implements Serializer<Shopper> {
     }
 
     @Override
-    public byte[] serialize(String topic, Shopper shopper) {
-        return JSON.toJSONBytes(shopper);
+    public byte[] serialize(String topic, Order order) {
+        return JSON.toJSONBytes(order);
     }
 
     @Override

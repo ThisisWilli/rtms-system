@@ -1,17 +1,11 @@
 package com.willi.kafka;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
+import com.willi.service.WebSocketServer;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Properties;
 
 /**
  * @program: bigdataplatform
@@ -22,11 +16,18 @@ import java.util.Properties;
 @Component
 public class Consumer {
 
-    @KafkaListener(topics = {"topic20200213"}, groupId = "test")
-    public void listen(String msg) throws InterruptedException {
-        System.out.println("接收到了消息" + msg.toString() + new Date());
-        Thread.sleep(5000);
+    @KafkaListener(topics = {"list_neigh"}, groupId = "test")
+    public void listenNeigh(String msg) throws InterruptedException {
+        System.out.println("接收到了区域信息     " + msg);
+        WebSocketServer.sendInfo(msg);
     }
+
+    @KafkaListener(topics = {"list_price"}, groupId = "test")
+    public void listenPrice(String msg) throws InterruptedException {
+        System.out.println("接收到了价格信息     " + msg);
+        WebSocketServer.sendInfo(msg);
+    }
+
 //    public static void main(String[] args) {
 //        Properties props = new Properties();
 //        props.put("bootstrap.servers", "localhost:9092");

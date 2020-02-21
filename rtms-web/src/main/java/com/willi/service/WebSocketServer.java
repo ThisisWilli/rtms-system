@@ -15,11 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 /**
- * Type: WebSocketServer
- * Description: WebSocketServer,实现服务器客户端平等交流，
- * 		达到服务器可以主动向客户端发生消息
- * @author LYM
- * @date Dec 18, 2018
  */
 @ServerEndpoint(value = "/")
 @Component
@@ -81,6 +76,8 @@ public class WebSocketServer {
     public boolean sendMessage(String message) {
         try {
             this.session.getBasicRemote().sendText(message);
+            String s = session.getRequestURI().toString();
+            System.out.println("request url=" + s);
             System.out.println("发送回信成功");
             return true;
         } catch (IOException error) {

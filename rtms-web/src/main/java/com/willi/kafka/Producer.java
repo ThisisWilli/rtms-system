@@ -1,10 +1,11 @@
 package com.willi.kafka;
 
-import com.willi.service.WebSocketServer;
+//import com.willi.service.WebSocketServer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Properties;
+
 /**
  * @program: bigdataplatform
  * @description:
@@ -34,7 +35,7 @@ public class Producer {
             ProducerRecord<String, String> record = new ProducerRecord<String, String>("topic20200213", key, value);
             try{
                 producer.send(record);
-                WebSocketServer.sendInfo("kafka正在发送消息");
+//                WebSocketServer.sendInfo("kafka正在发送消息");
                 Thread.sleep(2000);
                 System.out.println("发送完毕");
             }catch (Exception e){

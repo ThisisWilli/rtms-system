@@ -5,8 +5,9 @@ window.data = null;
 function openWebSocket(){
 	//判断当前浏览器是否支持WebSocket
 	if ('WebSocket' in window) {
-		ws = new WebSocket("ws://"+window.location.host);
-		console.log("初始化websocket服务器成功")
+		ws = new WebSocket("ws://localhost:8080");
+		console.log("开启8080端口服务成功")
+		console.log("初始化websocket服务器成功" )
 	} else if ('MozWebSocket' in window) {
 		websocket = new MozWebSocket("ws://"+window.location.host+"/websocket");
 	} else {

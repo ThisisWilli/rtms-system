@@ -4,5 +4,10 @@ spring:
   # 关闭模版引擎的缓存
   thymeleaf:
     cache: false
-  profiles:
-    active: kafka
+#  profiles:
+#    active: kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: test
+      auto-offset-reset: earliest

@@ -9,7 +9,6 @@
         <module name="rtms-web" />
         <module name="rtmsflink" />
         <module name="rtms-flink" />
-        <module name="rtms-kafka" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

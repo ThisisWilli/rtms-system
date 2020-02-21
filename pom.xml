@@ -22,7 +22,7 @@
 
     <modules>
         <module>rtms-web</module>
-        <module>rtms-kafka</module>
+<!--        <module>rtms-kafka</module>-->
   </modules>
 
     <dependencies>
