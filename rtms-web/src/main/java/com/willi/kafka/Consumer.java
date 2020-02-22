@@ -1,6 +1,7 @@
 package com.willi.kafka;
 
 
+import com.alibaba.fastjson.JSON;
 import com.willi.service.WebSocketServer;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -18,14 +19,16 @@ public class Consumer {
 
     @KafkaListener(topics = {"list_neigh"}, groupId = "test")
     public void listenNeigh(String msg) throws InterruptedException {
-        System.out.println("接收到了区域信息     " + msg);
-        WebSocketServer.sendInfo(msg);
+        String neigh = JSON.toJSONString(msg);
+        System.out.println("接收到了区域信息     " + neigh);
+        WebSocketServer.sendInfo(neigh);
     }
 
     @KafkaListener(topics = {"list_price"}, groupId = "test")
     public void listenPrice(String msg) throws InterruptedException {
+        String price = JSON.toJSONString(msg);
         System.out.println("接收到了价格信息     " + msg);
-        WebSocketServer.sendInfo(msg);
+//        WebSocketServer.sendInfo(price);
     }
 
 //    public static void main(String[] args) {

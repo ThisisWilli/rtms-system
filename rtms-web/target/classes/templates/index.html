@@ -33,13 +33,16 @@
   <script src="/js/jquery.min.js"></script>
   <script src="/js/echarts.min.js"></script>
   <script src="/js/monitor.js"></script>
+<!--	 <script th:src="@{/js/monitor.js}"></script>-->
 <!--  <script th:src="@{/js/websocket.js}"></script>-->
   <title>willi's area</title>
  </head>
  <body>
 	 <div class="main">
 <!--		 <div type="button" id="sendData" value="获取实时销售数据" width="20", height="20">-->
-		 <button type="button" id="sendData" value="获取实时销售数据" width="100", height="100"></button>
+<!--	    <button type="button" id="sendData" value="获取实时销售数据" width="100", height="100" >点击</button>-->
+		 <button type="button" id="sendData" width="100", height="100">获取实时销售数据</button>
+<!--		 <button th:οnclick="/sendData">点击</button>-->
 		<div id="layer02" class="layer" style="height:15%;">
 			<div id="layer02_01" style="width:20%;">
 				<div class="layer02-data">
@@ -86,7 +89,7 @@
 		</div>
 		<div id="layer03" class="layer" style="height:40%;">
 			<div id="layer03_left" style="width:48%;" class="layer03-panel">
-				<div id="layer03_left_label01" class="layer03-left-label">接入机型占比</div>
+				<div id="layer03_left_label01" class="layer03-left-label">各区订单占比</div>
 				<!--
 				<div id="layer03_left_label02" class="layer03-left-label">(左)在线数量 (右)上线率</div>
 				-->

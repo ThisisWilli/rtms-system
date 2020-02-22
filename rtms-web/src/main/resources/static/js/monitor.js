@@ -1,6 +1,7 @@
 var ws = null;
 var ws_status = false;
 window.data = null;
+window.pieData = new Map([['朝阳区', 0], ['东城区', 0], ['西城区', 0], ['海淀区', 0], ['怀柔区', 0], ['顺义区', 0], ['丰台区', 0]]);
 // var receiveData = 1;
 function openWebSocket(){
 	//判断当前浏览器是否支持WebSocket
@@ -19,15 +20,30 @@ function openWebSocket(){
 
 	};
 	// 接收到从后端发来的数据
-	ws.onmessage = function  (event) {
+	ws.onmessage = function (event) {
 		//根据业务逻辑解析数据
 		// console.log("Server:");
 		// document.getElementById("data").innerHTML = event.data
 		// console.log(event.data);
 		if (event) {
 			// console.log("websocket收到" + event.data)
-			window.data = event.data
-			console.log("window.data的值为" + window.data)
+			// console.log(event.data)
+			var data = event.data
+			var obj = JSON.parse(data);
+			// console.log(typeof data)
+			console.log("data为" + data)
+			console.log(obj.neighbourhood)
+			if (window.pieData.has(obj.neighbourhood)){
+				console.log("查找到了值")
+				var value = window.pieData.get(obj.neighbourhood);
+				window.pieData.set(obj.neighbourhood,value + 1)
+				for (var x of window.pieData) { // 遍历Map
+					console.log(x[0] + '=' + x[1]);
+				}
+			}
+			// console.log(typeof data)
+			// 若为字符类型，则表明该数据为区域数据
+			// console.log("window.data的值为" + window.data)
 			// receiveData = event.data
 			// renderLayer03Right(event.data);
 		} else {
@@ -54,7 +70,8 @@ setInterval(function(){
 }, 2000);
 // $("#sendData").click(function(){
 // 	// ws.send("Hello, server, I am browser.");
-// 	window.location.href="/sendData"
+// 	// window.location.href="/sendData"
+// 	console.log("点击了按钮")
 // });
 
 // document.write("<script language=javascript src='js/websocket.js'></script>");
@@ -96,13 +113,13 @@ var COLOR = {
 };
 
 function renderLegend(){
-	drawLegend(COLOR.MACHINE.TYPE_A,25,'A机型');
-	drawLegend(COLOR.MACHINE.TYPE_B,50,'B机型');
-	drawLegend(COLOR.MACHINE.TYPE_C,75,'C机型');
-	drawLegend(COLOR.MACHINE.TYPE_D,100,'D机型');
-	drawLegend(COLOR.MACHINE.TYPE_E,125,'E机型');
-	drawLegend(COLOR.MACHINE.TYPE_F,150,'F机型');
-	drawLegend(COLOR.MACHINE.TYPE_G,175,'G机型');
+	drawLegend(COLOR.MACHINE.TYPE_A,25,'朝阳区');
+	drawLegend(COLOR.MACHINE.TYPE_B,50,'东城区');
+	drawLegend(COLOR.MACHINE.TYPE_C,75,'西城区');
+	drawLegend(COLOR.MACHINE.TYPE_D,100,'海淀区');
+	drawLegend(COLOR.MACHINE.TYPE_E,125,'怀柔区');
+	drawLegend(COLOR.MACHINE.TYPE_F,150,'顺义区');
+	drawLegend(COLOR.MACHINE.TYPE_G,175,'丰台区');
 }
 
 function drawLegend(pointColor,pointY,text){
@@ -162,6 +179,7 @@ function drawLayer03Right(canvasObj,colorValue,rate){
 
 function renderChartBar01(){
 	var myChart = echarts.init(document.getElementById("layer03_left_02"));
+	// var map = new Map([['朝阳区', 0], ['东城区', 0], ['西城区', 0], ['海淀区', 0], ['怀柔区', 0], ['顺义区', 0], ['丰台区', 0]]);
 		myChart.setOption(
 					 {
 						title : {
@@ -177,7 +195,7 @@ function renderChartBar01(){
 							show:false,
 							x : 'center',
 							y : 'bottom',
-							data:['A机型','B机型','C机型','D机型','E机型','F机型','G机型']
+							data:['朝阳区','东城区','西城区','海淀区','怀柔区','顺义区','丰台区']
 						},
 						toolbox: {
 						},
@@ -197,13 +215,14 @@ function renderChartBar01(){
 								center : ['50%', '50%'],
 								//roseType : 'area',
 								data:[
-									{value:4600, name:'A机型'},
-									{value:4600, name:'B机型'},
-									{value:15600, name:'C机型'},
-									{value:6600, name:'D机型'},
-									{value:5700, name:'E机型'},
-									{value:7600, name:'F机型'},
-									{value:3500, name:'G机型'}
+									// {value:window.pieData.get('朝阳区'), name:'朝阳区'},
+									{value:1, name:'朝阳区'},
+									{value:window.pieData.get('东城区'), name:'东城区'},
+									{value:window.pieData.get('西城区'), name:'西城区'},
+									{value:window.pieData.get('海淀区'), name:'海淀区'},
+									{value:window.pieData.get('怀柔区'), name:'怀柔区'},
+									{value:window.pieData.get('顺义区'), name:'顺义区'},
+									{value:window.pieData.get('丰台区'), name:'丰台区'}
 								]
 							}
 						]
