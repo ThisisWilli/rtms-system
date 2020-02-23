@@ -52,4 +52,4 @@
 * 运行rtms-flink/src/main/java/com/willi/kafka/SendOrderData.java，发送数据
 
 ## 运行结果
-![](/Users/williwei/IdeaProjects/BigData-Platform/效果图.gif)
+![](https://github.com/ThisisWilli/rtms-system/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE.gif)
