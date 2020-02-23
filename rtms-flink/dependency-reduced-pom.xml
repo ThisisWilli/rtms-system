@@ -150,10 +150,6 @@
           <artifactId>commons-math3</artifactId>
           <groupId>org.apache.commons</groupId>
         </exclusion>
-        <exclusion>
-          <artifactId>jsr305</artifactId>
-          <groupId>com.google.code.findbugs</groupId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -181,10 +177,6 @@
         <exclusion>
           <artifactId>commons-math3</artifactId>
           <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jsr305</artifactId>
-          <groupId>com.google.code.findbugs</groupId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -2,6 +2,8 @@ package com.willi.kafka;
 
 
 import com.alibaba.fastjson.JSON;
+import com.willi.bean.Neigh;
+import com.willi.bean.Price;
 import com.willi.service.WebSocketServer;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -19,16 +21,31 @@ public class Consumer {
 
     @KafkaListener(topics = {"list_neigh"}, groupId = "test")
     public void listenNeigh(String msg) throws InterruptedException {
-        String neigh = JSON.toJSONString(msg);
-        System.out.println("接收到了区域信息     " + neigh);
-        WebSocketServer.sendInfo(neigh);
+        String[] splitData = msg.split(":");
+        Neigh neigh = null;
+//        String neigh = JSON.toJSONString(msg);
+//        System.out.println("接收到了区域信息     " + neigh);
+        if (splitData[0] != null && splitData[1] != null){
+            neigh = new Neigh(Integer.parseInt(splitData[0]), splitData[1]);
+        }
+
+        synchronized (Consumer.class) {
+            String neighData = JSON.toJSONString(neigh);
+            WebSocketServer.sendInfo(neighData);
+        }
     }
 
     @KafkaListener(topics = {"list_price"}, groupId = "test")
     public void listenPrice(String msg) throws InterruptedException {
-        String price = JSON.toJSONString(msg);
-        System.out.println("接收到了价格信息     " + msg);
-//        WebSocketServer.sendInfo(price);
+        String[] splitData = msg.split(":");
+        Price price = null;
+        if (splitData[0] != null && splitData[1] != null){
+            price = new Price(Integer.parseInt(splitData[0]), Double.valueOf(splitData[1]));
+        }
+        synchronized (Consumer.class){
+            String priceData = JSON.toJSONString(price);
+            WebSocketServer.sendInfo(priceData);
+        }
     }
 
 //    public static void main(String[] args) {

@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DataController {
     @RequestMapping("/sendData")
     public void ReadDataAndSendData(){
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             try {
                 Neigh neigh1 = new Neigh(117, "东城区");
+                Neigh neigh2 = new Neigh(22, "西城区");
                 String s = JSON.toJSONString(neigh1);
+                String s2 = JSON.toJSONString(neigh2);
                 System.out.println();
                 WebSocketServer.sendInfo(s);
+                WebSocketServer.sendInfo(s2);
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();

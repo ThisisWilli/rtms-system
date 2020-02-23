@@ -51,7 +51,7 @@ public class SendOrderData {
 //                System.out.println(rowData);
                 String[] splitData = rowData.split(",");
                 // 过滤描述中也有逗号的情况，直接过掉这条数据，后期进行优化
-                if (splitData.length > 16){
+                if (splitData.length != 16){
                     continue;
                 }
                 Order order = new Order(

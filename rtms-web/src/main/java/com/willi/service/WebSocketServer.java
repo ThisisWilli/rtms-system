@@ -77,8 +77,6 @@ public class WebSocketServer {
         try {
             this.session.getBasicRemote().sendText(message);
             String s = session.getRequestURI().toString();
-            System.out.println("request url=" + s);
-            System.out.println("发送回信成功");
             return true;
         } catch (IOException error) {
             LOGGER.error("webSocket-sendMessage发生错误:" + error.getClass() + error.getMessage());

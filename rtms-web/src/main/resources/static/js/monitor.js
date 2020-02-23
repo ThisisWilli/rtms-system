@@ -2,7 +2,7 @@ var ws = null;
 var ws_status = false;
 window.data = null;
 window.pieData = new Map([['朝阳区', 0], ['东城区', 0], ['西城区', 0], ['海淀区', 0], ['怀柔区', 0], ['顺义区', 0], ['丰台区', 0]]);
-// var receiveData = 1;
+window.priceData = [1, 1, 1, 1, 1]
 function openWebSocket(){
 	//判断当前浏览器是否支持WebSocket
 	if ('WebSocket' in window) {
@@ -21,35 +21,41 @@ function openWebSocket(){
 	};
 	// 接收到从后端发来的数据
 	ws.onmessage = function (event) {
-		//根据业务逻辑解析数据
-		// console.log("Server:");
-		// document.getElementById("data").innerHTML = event.data
-		// console.log(event.data);
 		if (event) {
-			// console.log("websocket收到" + event.data)
-			// console.log(event.data)
 			var data = event.data
 			var obj = JSON.parse(data);
-			// console.log(typeof data)
-			console.log("data为" + data)
-			console.log(obj.neighbourhood)
-			if (window.pieData.has(obj.neighbourhood)){
-				console.log("查找到了值")
-				var value = window.pieData.get(obj.neighbourhood);
-				window.pieData.set(obj.neighbourhood,value + 1)
-				for (var x of window.pieData) { // 遍历Map
-					console.log(x[0] + '=' + x[1]);
+			if (obj.neighbourhood != null){
+				if (window.pieData.has(obj.neighbourhood)){
+					// console.log("查找到了值")
+					var value = window.pieData.get(obj.neighbourhood);
+					window.pieData.set(obj.neighbourhood,value + 1)
+					// for (var x of window.pieData) { // 遍历Map
+					// 	console.log(x[0] + '=' + x[1]);
+					// }
 				}
 			}
-			// console.log(typeof data)
-			// 若为字符类型，则表明该数据为区域数据
-			// console.log("window.data的值为" + window.data)
-			// receiveData = event.data
-			// renderLayer03Right(event.data);
+
+			if (obj.price != null){
+				var price = obj.price;
+				if (price < 500){
+					window.priceData[0]++;
+				}
+				if (price >= 500 && price < 1000){
+					window.priceData[1]++;
+				}
+				if (price >= 1000 &&price < 1500){
+					window.priceData[2]++;
+				}
+				if (price >= 1500 && price < 2000){
+					window.priceData[3]++;
+				}
+				if (price >= 2000){
+					window.priceData[4]++;
+				}
+			}
 		} else {
 			console.log("websocket没有收到消息")
 		}
-
 	};
 	ws.onclose = function (event) {
 		console.log("Connection closed!");
@@ -74,31 +80,7 @@ setInterval(function(){
 // 	console.log("点击了按钮")
 // });
 
-// document.write("<script language=javascript src='js/websocket.js'></script>");
-function drawLayer02Label(canvasObj,text,textBeginX,lineEndX){
-	var colorValue = '#04918B';
 
-	var ctx = canvasObj.getContext("2d");
-
-	ctx.beginPath();
-	ctx.arc(35,55,2,0,2*Math.PI);
-	ctx.closePath();
-	ctx.fillStyle = colorValue;
-	ctx.fill();
-
-	ctx.moveTo(35,55);
-	ctx.lineTo(60,80);
-	ctx.lineTo(lineEndX,80);
-	ctx.lineWidth = 1;
-	ctx.strokeStyle = colorValue;
-	ctx.stroke();
-
-	ctx.font='12px Georgia';
-	ctx.fillStyle = colorValue;
-	ctx.fillText(text,textBeginX,92);
-}
-
-//接入机型占比
 
 var COLOR = {
 	MACHINE:{
@@ -135,11 +117,11 @@ function drawLegend(pointColor,pointY,text){
 
 
 //存储
-function renderLayer03Right(){
-	drawLayer03Right($("#layer03_right_chart01 canvas").get(0),"#027825",0.66);
-	drawLayer03Right($("#layer03_right_chart02 canvas").get(0),"#006DD6",0.52);
-	drawLayer03Right($("#layer03_right_chart03 canvas").get(0),"#238681",0.34);
-}
+// function renderLayer03Right(){
+// 	drawLayer03Right($("#layer03_right_chart01 canvas").get(0),"#027825",0.66);
+// 	drawLayer03Right($("#layer03_right_chart02 canvas").get(0),"#006DD6",0.52);
+// 	drawLayer03Right($("#layer03_right_chart03 canvas").get(0),"#238681",0.34);
+// }
 
 function drawLayer03Right(canvasObj,colorValue,rate){
 	var ctx = canvasObj.getContext("2d");
@@ -215,8 +197,8 @@ function renderChartBar01(){
 								center : ['50%', '50%'],
 								//roseType : 'area',
 								data:[
-									// {value:window.pieData.get('朝阳区'), name:'朝阳区'},
-									{value:1, name:'朝阳区'},
+									{value:window.pieData.get('朝阳区'), name:'朝阳区'},
+									// {value:1, name:'朝阳区'},
 									{value:window.pieData.get('东城区'), name:'东城区'},
 									{value:window.pieData.get('西城区'), name:'西城区'},
 									{value:window.pieData.get('海淀区'), name:'海淀区'},
@@ -231,80 +213,9 @@ function renderChartBar01(){
 
 }
 
-/*
-function renderChartBar02(){
-	var myChart = echarts.init(document.getElementById("layer03_left_03"));
-		myChart.setOption(
-					{
-						title : {
-							text: '',
-							subtext: '',
-							x:'center'
-						},
-						tooltip : {
-							show:true,
-							trigger: 'item',
-							formatter: "上线率<br>{b} : {c} ({d}%)"
-						},
-						legend: {
-							show:false,
-							orient: 'vertical',
-							left: 'left',
-							data: ['A机型','B机型','C机型','D机型','E机型','F机型','G机型']
-						},
-						series : [
-							{
-								name: '',
-								type: 'pie',
-								radius : '50%',
-								center: ['50%', '60%'],
-								data:[
-									{value:7600, name:'A机型'},
-									{value:6600, name:'B机型'},
-									{value:15600, name:'C机型'},
-									{value:5700, name:'D机型'},
-									{value:4600, name:'E机型'},
-									{value:4600, name:'F机型'},
-									{value:3500, name:'G机型'}
-								],
-								itemStyle: {
-									emphasis: {
-										shadowBlur: 10,
-										shadowOffsetX: 0,
-										shadowColor: 'rgba(0, 0, 0, 0.5)'
-									}
-								}
-							}
-						],
-						color:[COLOR.MACHINE.TYPE_A,COLOR.MACHINE.TYPE_B,COLOR.MACHINE.TYPE_C,COLOR.MACHINE.TYPE_D,COLOR.MACHINE.TYPE_E,COLOR.MACHINE.TYPE_F,COLOR.MACHINE.TYPE_G]
-					}
-		);
-}*/
 
-// ws = new WebSocket("ws://"+window.location.host);
 function renderLayer04Left(){
-	if (window.data) {
-		var parseData = JSON.parse(window.data);
-		console.log(parseData.province)
-	}else {
-		// console.log("data is null！！！！")
-	}
 	var myChart = echarts.init(document.getElementById("layer04_left_chart"));
-	// if (ws.onmessage){
-	// 	var myData = ws.onmessage()
-	// 	console.log(myData)
-	// }
-// 	var parseData = null;
-// 	// window.onload =
-// 	if (ws.onmessage()){
-// 		ws.onmessage = function (event) {
-// //'{"action":0,"ageRange":0,"brandId":2661,"catId":833,"day":29,"gender":1,"itemId":323294,"merchantId":2882,"month":8,"province":"内蒙古","userId":328862}'
-// 			var data = event.data;
-// 			parseData = JSON.parse(data);
-// 			console.log("dashboard收到了消息" + parseData.province)
-// 			// data.par
-// 		}
-// 	}
 
 	myChart.setOption(
 		{
@@ -426,67 +337,48 @@ function renderLayer04Left(){
 
 
 function renderLayer04Right(){
-	var myChart = echarts.init(document.getElementById("layer04_right_chart"));
-	myChart.setOption({
+
+	// 基于准备好的dom，初始化echarts实例
+	var myChart = echarts.init(document.getElementById('layer04_right_chart'));
+
+	// 指定图表的配置项和数据
+
+	// 使用刚指定的配置项和数据显示图表。
+	myChart.setOption(
+		{
 			title: {
 				text: ''
 			},
-			tooltip: {
-				trigger: 'axis'
-			},
+			tooltip: {},
 			legend: {
-				top:20,
-				right:5,
-				textStyle:{
-					color:'white'
-				},
-				orient:'vertical',
-				data:[
-						{name:'网络',icon:'circle'},
-						{name:'内存',icon:'circle'},
-						{name:'CPU',icon:'circle'}
-					]
-			},
-			grid: {
-				left: '3%',
-				right: '16%',
-				bottom: '3%',
-				top:'3%',
-				containLabel: true
+				data:['销量']
 			},
 			xAxis: {
 				type: 'category',
-				boundaryGap: false,
-				axisTick:{show:false},
+				data: ["0-500¥","500-1000¥","1000-1500¥","1500-2000¥",">2000¥",],
 				axisLabel:{
 					textStyle:{
-						color:"white", //刻度颜色
-						fontSize:8  //刻度大小
-						}
+						color:"white",
+						fontsize:1
+					},
+					rotate: 0,
+					interval: 0
 				},
-				axisLine:{
-					show:true,
-					lineStyle:{
-						color: '#0B3148',
-						width: 1,
-						type: 'solid'
-					}
-				},
-				data: get10MinutesScale()
+
 			},
 			yAxis: {
-				type: 'value',
+				type : 'value',
 				axisTick:{show:false},
 				axisLabel:{
 					textStyle:{
 						color:"white", //刻度颜色
 						fontSize:8  //刻度大小
-						}
+					}
 				},
 				axisLine:{
 					show:true,
 					lineStyle:{
-						color: '#0B3148',
+						color: '#0175EE',
 						width: 1,
 						type: 'solid'
 					}
@@ -495,58 +387,14 @@ function renderLayer04Right(){
 					show:false
 				}
 			},
-			series: [
-						{
-							name:'网络',
-							type:'line',
-							itemStyle : {  
-									normal : {  
-									color:'#F3891B'
-								},
-								lineStyle:{
-									normal:{
-									color:'#F3891B',
-									opacity:1
-										}
-								}
-							},  
-							data:[120, 132, 101, 134, 90, 230, 210]
-						},
-						{
-							name:'内存',
-							type:'line',
-							itemStyle : {  
-									normal : {  
-									color:'#006AD4'
-								},
-								lineStyle:{
-									normal:{
-									color:'#F3891B',
-									opacity:1
-										}
-								}
-							},
-							data:[220, 182, 191, 234, 290, 330, 310]
-						},
-						{
-							name:'CPU',
-							type:'line',
-							itemStyle : {  
-									normal : {  
-									color:'#009895'
-								},
-								lineStyle:{
-									normal:{
-									color:'#009895',
-									opacity:1
-										}
-								}
-							},
-							data:[150, 232, 201, 154, 190, 330, 410]
-						}
-					]
-		}	
+			series: [{
+				name: '销量',
+				type: 'bar',
+				data: window.priceData
+			}]
+		}
 	);
+
 }
 
 function get10MinutesScale() {
@@ -572,5 +420,7 @@ function getLatestDays(num) {
 	}
 	return returnDays;
 }
-setInterval(renderLayer04Left, 2000)
+setInterval(renderLayer04Left, 1000)
+setInterval(renderChartBar01, 1000)
+setInterval(renderLayer04Right, 1000)
 
