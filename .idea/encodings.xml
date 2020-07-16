@@ -3,7 +3,9 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/rtms-flink" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/rtms-kafka" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rtms-flink/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rtms-flink/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/rtms-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rtms-web/src/main/java" charset="UTF-8" />
   </component>
 </project>
