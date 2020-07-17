@@ -131,15 +131,11 @@
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-java</artifactId>
-      <version>1.9.0</version>
+      <version>1.11.0</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
           <artifactId>flink-core</artifactId>
-          <groupId>org.apache.flink</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>flink-shaded-asm-6</artifactId>
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
@@ -154,16 +150,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-streaming-java_2.12</artifactId>
-      <version>1.9.0</version>
+      <artifactId>flink-streaming-java_2.11</artifactId>
+      <version>1.11.0</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>flink-runtime_2.12</artifactId>
-          <groupId>org.apache.flink</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>flink-clients_2.12</artifactId>
+          <artifactId>flink-runtime_2.11</artifactId>
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
@@ -195,8 +187,8 @@
   </dependencies>
   <properties>
     <java.version>1.8</java.version>
-    <scala.binary.version>2.12</scala.binary.version>
-    <flink.version>1.9.0</flink.version>
+    <scala.binary.version>2.11</scala.binary.version>
+    <flink.version>1.11.0</flink.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>${java.version}</maven.compiler.target>

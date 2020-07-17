@@ -106,10 +106,19 @@ public class WarnMessage {
         this.warnDuration = warnDuration;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "WarnMessage{" +
                 "id='" + id + '\'' +
+                ", type='" + type + '\'' +
                 ", timestamp=" + timestamp +
                 ", productionLineName='" + productionLineName + '\'' +
                 ", deviceName='" + deviceName + '\'' +
