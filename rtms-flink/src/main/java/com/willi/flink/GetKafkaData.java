@@ -83,19 +83,20 @@ public class GetKafkaData {
                 new MyKafkaDeserializationSchema(),
                 consumerProps
         );
+
+        FlinkKafkaConsumer<ConsumerRecord<String, String>> consumer2 = new FlinkKafkaConsumer<ConsumerRecord<String, String>>(
+                java.util.regex.Pattern.compile("raw_.*"),
+                new MyKafkaDeserializationSchema(),
+                consumerProps
+        );
+
         // 获取raw_order中的订单原始数据，并对数据按照key值进行分流
         DataStream<ConsumerRecord<String, String>> source = env.addSource(consumer);
+        DataStreamSource<ConsumerRecord<String, String>> source2 = env.addSource(consumer2);
         source.filter(Objects::nonNull)
-                .keyBy(record->record.key())
-                .map(record->record.value())
-//                .returns(ConsumerRecord.class)
-//                .map(data->{
-//                    if ("warn".equals(data.key())){
-//                        return new Tuple8<String, String, Long, String, String, String, String, String>(
-//
-//                        )
-//                    }
-//                }).print();
+                .keyBy(ConsumerRecord::key)
+                .map(ConsumerRecord::value);
+
 
         // execute program
         env.execute("Flink ETL");

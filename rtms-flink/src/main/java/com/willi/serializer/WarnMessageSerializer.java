@@ -1,7 +1,7 @@
-package com.willi.utils;
+package com.willi.serializer;
 
 import com.alibaba.fastjson.JSON;
-import com.willi.Bean.QualityMessage;
+import com.willi.Bean.WarnMessage;
 import org.apache.kafka.common.serialization.Serializer;
 
 import java.util.Map;
@@ -10,22 +10,20 @@ import java.util.Map;
  * \* project: bigdataplatform
  * \* package: com.willi.utils
  * \* author: Willi Wei
- * \* date: 2020-07-17 14:17:08
+ * \* date: 2020-07-16 11:02:17
  * \* description:
  * \
  */
-public class QualityMessageSerializer implements Serializer<QualityMessage> {
+public class WarnMessageSerializer implements Serializer<WarnMessage> {
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
 
     }
 
     @Override
-    public byte[] serialize(String topic, QualityMessage data) {
-        return JSON.toJSONBytes(data);
+    public byte[] serialize(String topic, WarnMessage warnMessage) {
+        return JSON.toJSONBytes(warnMessage);
     }
-
-
 
     @Override
     public void close() {
