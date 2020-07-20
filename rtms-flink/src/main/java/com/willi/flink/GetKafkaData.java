@@ -2,26 +2,33 @@ package com.willi.flink;
 
 import com.alibaba.fastjson.JSON;
 import com.willi.Bean.Order;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
+import com.willi.Bean.WarnMessage;
+import com.willi.sink.WarnMySQLSink;
+import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.typeinfo.Types;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
+import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
+import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.connectors.kafka.*;
-import org.apache.flink.streaming.connectors.kafka.internals.KeyedSerializationSchemaWrapper;
-import org.apache.flink.streaming.util.serialization.JSONKeyValueDeserializationSchema;
-import org.apache.flink.streaming.util.serialization.KeyedDeserializationSchema;
-import org.apache.flink.streaming.util.serialization.KeyedSerializationSchema;
-import org.apache.flink.streaming.util.serialization.TypeInformationKeyValueSerializationSchema;
+import org.apache.flink.util.Collector;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import scala.Tuple8;
 
+import java.time.Duration;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -43,6 +50,7 @@ public class GetKafkaData {
 
         // 准备环境
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
 
         /*=====================开启checkpoint========================*/
@@ -78,27 +86,63 @@ public class GetKafkaData {
 
 
 
-        FlinkKafkaConsumer<ConsumerRecord<String, String>> consumer = new FlinkKafkaConsumer<ConsumerRecord<String, String>>(
-                java.util.regex.Pattern.compile("raw_.*"),
+        FlinkKafkaConsumer<ConsumerRecord<String, String>> warnConsumer = new FlinkKafkaConsumer<ConsumerRecord<String, String>>(
+                java.util.regex.Pattern.compile("raw_warn"),
                 new MyKafkaDeserializationSchema(),
                 consumerProps
         );
 
-        FlinkKafkaConsumer<ConsumerRecord<String, String>> consumer2 = new FlinkKafkaConsumer<ConsumerRecord<String, String>>(
-                java.util.regex.Pattern.compile("raw_.*"),
+        FlinkKafkaConsumer<ConsumerRecord<String, String>> qualityConsumer = new FlinkKafkaConsumer<ConsumerRecord<String, String>>(
+                java.util.regex.Pattern.compile("raw_quality_.*"),
                 new MyKafkaDeserializationSchema(),
                 consumerProps
         );
 
         // 获取raw_order中的订单原始数据，并对数据按照key值进行分流
-        DataStream<ConsumerRecord<String, String>> source = env.addSource(consumer);
-        DataStreamSource<ConsumerRecord<String, String>> source2 = env.addSource(consumer2);
-        source.filter(Objects::nonNull)
-                .keyBy(ConsumerRecord::key)
-                .map(ConsumerRecord::value);
+        DataStream<ConsumerRecord<String, String>> warnSource = env.addSource(warnConsumer);
+//        DataStreamSource<ConsumerRecord<String, String>> qualitySource = env.addSource(qualityConsumer);
 
+
+        // 别的数据存储到mysql
+//        warnSource.map(data->JSON.parseObject(data.value(), WarnMessage.class))
+//                .addSink(new WarnMySQLSink());
+
+        // 利用窗口统计30s内所有工位发生的警报信息，允许10s的迟到信息
+        warnSource.map(data->JSON.parseObject(data.value(), WarnMessage.class))
+                .returns(WarnMessage.class)
+                .assignTimestampsAndWatermarks(WatermarkStrategy.<WarnMessage>forBoundedOutOfOrderness(Duration.ofSeconds(1))
+                .withTimestampAssigner(new SerializableTimestampAssigner<WarnMessage>() {
+                    @Override
+                    public long extractTimestamp(WarnMessage warnMessage, long l) {
+                        return warnMessage.getTimestamp();
+                    }
+                })
+                ).map(data->new Tuple2<String, Integer>(data.getProductionLineName(), 1))
+                .returns(Types.TUPLE(Types.STRING, Types.INT))
+                .keyBy(data->data.f0)
+                .timeWindow(Time.seconds(1))
+                .reduce(new ReduceFunction<Tuple2<String, Integer>>() {
+                    @Override
+                    public Tuple2<String, Integer> reduce(Tuple2<String, Integer> t1, Tuple2<String, Integer> t2) throws Exception {
+                        return new Tuple2<String, Integer>(t1.f0, t1.f1 + t2.f1);
+                    }
+                }, new ProcessWindowFunction<Tuple2<String, Integer>, String, String, TimeWindow>() {
+                    @Override
+                    public void process(String s, Context context, Iterable<Tuple2<String, Integer>> elements, Collector<String> collector) throws Exception {
+                        System.out.println("=============================");
+                        System.out.println("window: [" + context.window().getStart() + "->" + context.window().getEnd() + "]");
+                        System.out.println("窗口中的数据为:");
+                        Iterator<Tuple2<String, Integer>> iterator = elements.iterator();
+                        while (iterator.hasNext()){
+                            System.out.println(iterator.next());
+                        }
+                        System.out.println("============================");
+                    }
+                }).print();
 
         // execute program
         env.execute("Flink ETL");
     }
 }
+
+

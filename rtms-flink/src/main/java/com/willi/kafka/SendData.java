@@ -59,7 +59,7 @@ public class SendData {
                 // 生成[0,10]区间的整数，每隔sleepTimes内发送一条消息
                 int sleepTime = new Random().nextInt(5);
                 String rowData = reader.getRawRecord();
-//                System.out.println(rowData);
+                System.out.println(rowData);
                 String[] splitData = rowData.split("\t");
                 // 过滤描述中也有逗号的情况，直接过掉这条数据，后期进行优化
 
