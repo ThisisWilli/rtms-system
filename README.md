@@ -14,7 +14,7 @@
 
 ## 数据
 
-数据选用的是开源的airbub的订单数据
+采用子生成的监控数据
 
 ## 项目运行
 
@@ -53,3 +53,15 @@
 
 ## 运行结果
 ![](https://github.com/ThisisWilli/rtms-system/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE.gif)
+
+
+## 实现的需求
+### 统计单位时间内，生产线上每种设备的报警次数，并按降序排序
+ 具体实现见com/willi/flink/RealTimeWarnAnalyse.java
+实现思路：
+ 1. 首先将源数据流按照设备的名称用keyBy算子分成不同的stream，并提取出数据中的时间戳
+ 2. 定义一个5s的时间窗口，自定义一个aggregate函数，使用累加器统计每个设备在5s中只能的报警次数，在aggregate算子中定义windowFunction的
+ 匿名内部类，提取出每个窗口的具体信息
+ 3. 将数据按照窗口的结束时间进行keyBy分类，并在process方法中使用状态编程，记录先前到达的数据
+ 4. 存储每个相同结束时间窗口的数据，并在所有数据都到达之后，触发计算
+
