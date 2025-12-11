@@ -99,7 +99,7 @@ under the License.
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka_2.12</artifactId>
-			<version>0.11.0.3</version>
+			<version>3.7.2</version>
 		</dependency>
 
 		<dependency>
